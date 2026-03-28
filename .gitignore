@@ -1,0 +1,6 @@
+config.json 
+watchlist.json 
+finds_log.json 
+finds_export.csv 
+__pycache__/ 
+*.pyc 
