@@ -130,7 +130,6 @@ def _apply_theme(name: str):
     global _T
     _T = THEMES.get(name, THEMES["Dark"]).copy()
 
-
 # ─────────────────────────────────────────────────────────────────
 # DESKTOP NOTIFICATION
 # ─────────────────────────────────────────────────────────────────
@@ -142,7 +141,6 @@ def _desktop_notify(title: str, message: str) -> None:
                             app_name="HorizonXI Sniper", timeout=10)
     except Exception:
         pass
-
 
 # ─────────────────────────────────────────────────────────────────
 # PERSISTENT ALERT OVERLAY
@@ -302,7 +300,6 @@ class AlertOverlay:
                 self._build()
                 self._rebuild_table()
 
-
 # ─────────────────────────────────────────────────────────────────
 # DATA MODELS
 # ─────────────────────────────────────────────────────────────────
@@ -323,7 +320,6 @@ class WatchItem:
     last_source:   Optional[str] = None
     last_buyer:    Optional[str] = None   # NEW: buyer name from PSXI
 
-
 @dataclass
 class FindRecord:
     timestamp:    str
@@ -336,7 +332,6 @@ class FindRecord:
     quantity:     int
     buyer:        str = ""          # NEW: buyer name (PSXI AH transactions)
     stack_label:  str = "Single"    # NEW: "Single" | "Stack"
-
 
 # ─────────────────────────────────────────────────────────────────
 # AUTH MANAGER
@@ -441,7 +436,6 @@ class AuthManager:
         if token:
             h["Authorization"] = f"Bearer {token}"
         return h
-
 
 # ─────────────────────────────────────────────────────────────────
 # BAZAAR SCRAPER ENGINE
@@ -1147,7 +1141,6 @@ class BazaarScraper:
             "by_hour":           dict(by_hour),
             "recent":            list(reversed(self.finds_log[-20:])),
         }
-
 
 # ─────────────────────────────────────────────────────────────────
 # GUI APPLICATION
@@ -2253,7 +2246,6 @@ class HorizonSniperApp:
         except Exception as e:
             messagebox.showerror("Export Error", str(e))
 
-
 # ─────────────────────────────────────────────────────────────────
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────
@@ -2288,7 +2280,6 @@ def main():
         root.mainloop()
     except KeyboardInterrupt:
         _shutdown()
-
 
 if __name__ == "__main__":
     print("=" * 46)
