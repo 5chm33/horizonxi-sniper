@@ -28,6 +28,7 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Optional
+from settings_migration import auth_config_for_save, migrate_auth_config
 
 # ─────────────────────────────────────────────────────────────────
 # CONSTANTS
@@ -358,18 +359,23 @@ class AuthManager:
             try:
                 with open(CONFIG_FILE) as f:
                     cfg = json.load(f)
-                self._username = cfg.get("username", "")
-                self._password = cfg.get("password", "")
+                migrated = migrate_auth_config(cfg)
+                self._username = migrated["username"]
+                # Rewrite legacy files immediately so plaintext secrets do not
+                # remain on disk. The password is intentionally session-only.
+                if "password" in cfg:
+                    with open(CONFIG_FILE, "w") as f:
+                        json.dump(migrated, f)
             except Exception:
                 pass
 
     def save_config(self, username: str, password: str):
         self._username = username
-        self._password = password
+        self._password = password  # session-only; never persist this secret
         self._token    = None
         try:
             with open(CONFIG_FILE, "w") as f:
-                json.dump({"username": username, "password": password}, f)
+                json.dump(auth_config_for_save(username), f)
         except Exception as e:
             print(f"[CONFIG SAVE ERROR] {e}")
 

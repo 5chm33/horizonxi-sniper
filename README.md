@@ -8,7 +8,7 @@ A SOTA (State-of-the-Art) real-time bazaar price monitor for the [HorizonXI](htt
 
 | Feature | Details |
 |---|---|
-| **24/7 Auto-Scan** | Polls `api.horizonxi.com` every 60 seconds automatically |
+| **Continuous Auto-Scan** | Runs a background loop: bazaar every 5 seconds, PSXI transaction stream every 5 seconds, and authenticated HorizonXI AH checks every 15 seconds (while the app is running) |
 | **Instant Popup Alerts** | In-app alert window + native OS desktop notification fires the moment a deal is found |
 | **Default Watchlist** | Lungo-Nango Jadeshell, Montiont Silverpiece, 100 Byne Bill — all monitored at ≤ 10,000 gil |
 | **Dynamic Watchlist** | Add, remove, enable/disable, and edit price caps for any item at any time |
@@ -108,6 +108,7 @@ Popups auto-dismiss after 45 seconds, or click **Dismiss** manually.
 | `requirements.txt` | Python dependencies |
 | `watchlist.json` | Auto-created — persists your watchlist |
 | `finds_log.json` | Auto-created — persists your finds history |
+| `config.json` | Auto-created — persists the username only; password is requested again after restart |
 | `finds_export.csv` | Created when you click Export CSV |
 
 ---
@@ -129,7 +130,9 @@ These are the three 100-currency Dynamis items. Current market prices are ~600,0
 Open `horizonxi_scraper.py` in any text editor and adjust these constants near the top:
 
 ```python
-SCAN_INTERVAL = 60   # seconds between scans (minimum recommended: 30)
+BAZAAR_INTERVAL = 5   # seconds between bazaar scans
+PSXI_INTERVAL   = 5   # seconds between PSXI transaction polls
+AH_INTERVAL     = 15  # seconds between authenticated AH checks
 ```
 
 To change default watchlist items, edit `DEFAULT_WATCHLIST` — but note this only applies on first run (before `watchlist.json` is created). After that, use the GUI.
@@ -141,8 +144,9 @@ To change default watchlist items, edit `DEFAULT_WATCHLIST` — but note this on
 - **API endpoint**: `https://api.horizonxi.com/api/v1/items/bazaar` — returns all ~800 active bazaar listings as a JSON array
 - **Fields per listing**: `name`, `bazaar` (price), `charname` (seller), `zone`, `quantity`, `online_flag`
 - **Search**: performed client-side against the cached bazaar data — same approach as the HorizonXI website itself
-- **No authentication required**: the API is fully public
-- **Rate limiting**: one request per 60 seconds is well within safe limits
+- **No authentication required for bazaar/PSXI**: authenticated HorizonXI AH checks are optional and require a user login
+- **Credential handling**: only the username is persisted; the password remains in memory for the current session and must be entered again after restart
+- **Polling cadence**: bazaar and PSXI are polled every 5 seconds; authenticated AH checks run every 15 seconds. These are implementation values, not a claim about external service rate limits.
 
 ---
 
